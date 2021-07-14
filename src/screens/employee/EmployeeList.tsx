@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './EmployeeList.css'
+import { Pagination } from "../../components";
 
 interface Employee {
     id: string,
@@ -12,7 +13,7 @@ interface Filter {
     limit: number
 }
 
-const EmployeeList: React.FC = () => {
+export const EmployeeList: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isOpenAddNew, setIsOpenAddNew] = useState<boolean>(false)
     const [newName, setNewName] = useState<string>('')
@@ -22,7 +23,9 @@ const EmployeeList: React.FC = () => {
         page: 1,
         limit: 5
     })
+
     const url = 'https://60ed7dc9a78dc700178adf53.mockapi.io/employees'
+    const totalRows = 35 // should be get from server
     const {page, limit} = filter
 
     useEffect(() => {
@@ -48,42 +51,27 @@ const EmployeeList: React.FC = () => {
         setNewPhone('')
     }
 
-    const handleOnPrev = () => {
+    const handleOnPageNumberChanged = (pageNum: number) => {
         reset()
-        if (page === 1) {
-            // Disabled
-            return
-        }
         setFilter({
             ...filter,
-            page: page - 1
-        })
-    }
-
-    const handleOnNext = () => {
-        reset()
-        if (page * limit >= 100) {
-            // Disabled
-            return
-        }
-        setFilter({
-            ...filter,
-            page: page + 1
+            page: pageNum
         })
     }
 
     const onNameChanged = (e: any) => {
-        setNewName(e.target.value ?? '')
+        setNewName(e.target.value ?? newName)
     }
 
     const onPhoneChanged = (e: any) => {
-        setNewPhone(e.target.value ?? '')
+        setNewPhone(e.target.value ?? newPhone)
     }
 
     const onCancel = () => reset()
 
     const onSubmit = async () => {
         try {
+            setIsLoading(true)
             await fetch(url, {
                 method: 'POST',
                 mode: 'cors',
@@ -95,65 +83,60 @@ const EmployeeList: React.FC = () => {
                 redirect: 'follow',
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({
-                    phone: newName,
-                    name: newPhone
+                    phone: newPhone,
+                    name: newName
                 })
             });
             alert('Create new item successfully!!')
             reset()
         } catch (e) {
             console.log('Failed to post data', e.message)
+        } finally {
+            setIsLoading(false)
         }
     }
 
     return (
-        <React.Fragment>
-            {
-                isLoading ? <span>Loading...</span> :
-                    <div className="container">
-                        {JSON.stringify(filter)}
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Phone</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                employeeList.map(e => (
-                                    <tr key={e.id}>
-                                        <td>{e.name}</td>
-                                        <td>{e.phone}</td>
-                                    </tr>
-                                ))
-                            }
+        <div className={`${isLoading ? 'container opacity-50' : 'container'}`}>
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                </tr>
+                </thead>
+                <tbody>
+                {
+                    employeeList.map(e => (
+                        <tr key={e.id}>
+                            <td>{e.name}</td>
+                            <td>{e.phone}</td>
+                        </tr>
+                    ))
+                }
 
-                            {
-                                isOpenAddNew &&
-                                <tr key='100000'>
-                                    <td><input type="text" value={newName} onChange={e => onNameChanged(e)}/></td>
-                                    <td><input type="text" value={newPhone} onChange={e => onPhoneChanged(e)}/></td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                        {
-                            isOpenAddNew ?
-                                <div>
-                                    <button onClick={onCancel}>Cancel</button>
-                                    <button onClick={onSubmit} className="ml-1">Submit</button>
-                                </div>
-                                : <button onClick={() => setIsOpenAddNew(true)} className="mt-1">+ New</button>
-                        }
-                        <div className="flex-btn">
-                            <button onClick={handleOnPrev}>Prev</button>
-                            <button onClick={handleOnNext} className="ml-1">Next</button>
-                        </div>
+                {
+                    isOpenAddNew &&
+                    <tr key='100000'>
+                        <td><input type="text" value={newName} onChange={e => onNameChanged(e)}/></td>
+                        <td><input type="text" value={newPhone} onChange={e => onPhoneChanged(e)}/></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            {
+                isOpenAddNew ?
+                    <div>
+                        <button onClick={onCancel}>Cancel</button>
+                        <button onClick={onSubmit} className="ml-1">Submit</button>
                     </div>
+                    : <button onClick={() => setIsOpenAddNew(true)} className="mt-1">+ New</button>
             }
-        </React.Fragment>
+            <Pagination
+                selectedPage={page}
+                limit={limit}
+                totalRows={totalRows}
+                onPageChanged={pageNumber => handleOnPageNumberChanged(pageNumber)} />
+        </div>
     );
 }
-
-export default EmployeeList;

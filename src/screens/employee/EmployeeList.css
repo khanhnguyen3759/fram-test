@@ -2,6 +2,10 @@
     width: 50%
 }
 
+.opacity-50 {
+    opacity: 0.5;
+}
+
 .flex-btn {
     display: flex;
     justify-content: flex-end;

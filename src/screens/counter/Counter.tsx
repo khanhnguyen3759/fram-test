@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import './Home.css'
+import './Counter.css'
 
-const Home: React.FC = () => {
+export const Counter: React.FC = () => {
     const [counter, setCounter] = useState(0)
 
     const onIncrease = () => {
@@ -20,5 +20,3 @@ const Home: React.FC = () => {
         </div>
     );
 }
-
-export default Home;
