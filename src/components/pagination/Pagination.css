@@ -3,16 +3,17 @@
     justify-content: flex-end;
 }
 
-.pagination a {
+.pagination div {
     color: black;
     float: left;
     padding: 8px 16px;
     text-decoration: none;
+    cursor: pointer;
 }
 
-.pagination a.active {
+.pagination div.active {
     background-color: #4CAF50;
     color: white;
 }
 
-.pagination a:hover:not(.active) {background-color: #ddd;}
+.pagination div:hover:not(.active) {background-color: #ddd;}

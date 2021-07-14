@@ -22,18 +22,18 @@ export const Pagination: React.FC<Props> = (props) => {
     const getPagingNumber = (): JSX.Element[] => {
         const result: JSX.Element[] = []
         for (let i = 1; i <= totalPageNumbers; i++) {
-            result.push((<a key={i} href="#" className={`${selectedPage === i && 'active'}`} onClick={() => onPageNumberChanged(i)}>{i}</a>))
+            result.push((<div key={i} className={`${selectedPage === i && 'active'}`} onClick={() => onPageNumberChanged(i)}>{i}</div>))
         }
         return result
     }
 
     return (
         <div className="pagination">
-            <a href="#" onClick={() => onPageNumberChanged(selectedPage - 1)}>&laquo;</a>
+            <div onClick={() => onPageNumberChanged(selectedPage - 1)}>&laquo;</div>
             {
                 getPagingNumber()
             }
-            <a href="#" onClick={() => onPageNumberChanged(selectedPage + 1)}>&raquo;</a>
+            <div onClick={() => onPageNumberChanged(selectedPage + 1)}>&raquo;</div>
         </div>
     );
 }
