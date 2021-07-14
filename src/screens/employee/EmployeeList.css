@@ -11,6 +11,10 @@
     margin-left: 1rem;
 }
 
+.mt-1 {
+    margin-top: 1rem;
+}
+
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
